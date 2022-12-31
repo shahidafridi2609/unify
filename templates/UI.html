@@ -2,7 +2,8 @@
 <html lang="">
 <head>
 <title>Simple Chat</title>
-<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+<!--<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">-->
+<link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
 <section class="msger">
@@ -32,9 +33,9 @@
     <button type="submit" class="msger-send-btn" id="sumbit">Send</button>
   </form>
   <script type="text/javascript">
-    const msgerForm = get(".msger-inputarea");
-    const msgerInput = get(".msger-input");
-    const msgerChat = get(".msger-chat");
+    const msgerForm = document.getElementsByClassName("msger-inputarea")[0];
+    const msgerInput = document.getElementsByClassName("msger-input")[0];
+    const msgerChat = document.getElementsByClassName("msger-chat")[0];
     // Icons made by Freepik from www.flaticon.com
     const BOT_IMG = "https://media.istockphoto.com/id/1010001882/vector/%C3%B0%C3%B0%C2%B5%C3%B1%C3%B0%C3%B1%C3%B1.jpg?s=612x612&w=0&k=20&c=1jeAr9KSx3sG7SKxUPR_j8WPSZq_NIKL0P-MA4F1xRw=";
     const PERSON_IMG = "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=612x612&w=0&k=20&c=EOYXACjtZmZQ5IsZ0UUp1iNmZ9q2xl1BD1VvN6tZ2UI=";
@@ -43,7 +44,8 @@
         console.log('1')
         var your_id=Math.floor(Math.random() * 100);
         document.querySelector("#id1-input").value = your_id;
-        const ws = new WebSocket(`ws://192.168.0.105/EstablishConn/${your_id}`);
+        const protocol = window.location.protocol.includes('https') ? 'wss': 'ws';
+        const ws = new WebSocket(`${protocol}://${location.host}/EstablishConn/${your_id}`);
         function Est() {
             console.log('start');
             //const your_id = document.getElementById('id1-input').value;
