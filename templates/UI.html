@@ -59,7 +59,8 @@
         }
             ws.onmessage = function (event) {
                 console.log(event.data);
-                appendMessage(BOT_NAME, BOT_IMG, "left", event.data);
+                const fri_id = document.getElementById('id2-input');
+                appendMessage(fri_id.value, BOT_IMG, "left", event.data);
             };
 
             function sendMessage(event) {
@@ -76,6 +77,7 @@
             msgerForm.addEventListener("submit", event => {
               event.preventDefault();
               const fri_id = document.getElementById('id2-input');
+              const your_id = document.getElementById('id1-input');
               const msgText = msgerInput.value;
               console.log(msgText)
               if (!msgText) return;
@@ -84,19 +86,20 @@
                 msgdata.friend_id = fri_id.value;
                 console.log(msgdata)
                 ws.send(JSON.stringify(msgdata));
-              appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+              appendMessage(your_id.value, PERSON_IMG, "right", msgText);
               msgerInput.value = "";
 
             });
             function appendMessage(name, img, side, text) {
             //   Simple solution for small apps
+              var today  = new Date();
             const msgHTML = `
                         <div class="msg ${side}-msg">
                           <div class="msg-img" style="background-image: url(${img})"></div>
                           <div class="msg-bubble">
                             <div class="msg-info">
                               <div class="msg-info-name">${name}</div>
-                              <div class="msg-info-time">${formatDate(new Date())}</div>
+                              <div class="msg-info-time">${today.toLocaleDateString("en-US")}</div>
                             </div>
 
                             <div class="msg-text">${text}</div>
