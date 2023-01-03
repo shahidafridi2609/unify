@@ -1,98 +1,180 @@
 <!DOCTYPE html>
 <html lang="">
 <head>
-<title>Simple Chat</title>
-<!--<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">-->
-<link rel="stylesheet" href="../static/style.css">
+    <title>Unify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">-->
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Select Chat Mode</h2>
+        </div>
+        <div class="modal-body">
+            <div class="msg-coninfo" id="msg-coninfo">
+
+            </div>
+            <div class="chat-friend-btn" id="chatfrnd-input">
+                <input type="number" id="id1-input" placeholder="Your ID" readonly/><br>
+                <input type="number" id="id2-input" placeholder="Enter friend ID"/><br>
+                <button id="conn1" onclick="Est();">Connect</button>
+            </div>
+            <div class="btn-options" id="btn-options">
+                <button id="chat-friend">Chat With Friend</button><br><br>
+                <button id="chat-random">Chat Random</button>
+            </div>
+        </div>
+        <!--<div class="modal-footer">
+          <h3>Modal Footer</h3>
+        </div>-->
+    </div>
+
+</div>
 <section class="msger">
-  <input type="text" id="id1-input" placeholder="Your ID" readonly/>
-  <input type="text" id="id2-input" placeholder="Enter friend ID"/>
-  <button id="conn1" onclick="Est();">Connect</button>
-  <header class="msger-header">
-    <div class="msger-header-title">
-      <i class="fas fa-comment-alt"></i> SimpleChat
-    </div>
-    <div class="msger-header-options">
-      <span><i class="fas fa-cog"></i></span>
-    </div>
-  </header>
+    <header class="msger-header">
+        <div class="msger-header-title">
+            <i class="fas fa-comment-alt"></i> Unify
+        </div>
+        <div class="msger-header-options">
+            <span><i class="fas fa-cog">Online Connections:<span id="countnum"></span></i></span>
+        </div>
+    </header>
 
-  <main class="msger-chat">
+    <main class="msger-chat">
 
 
 
-  </main>
+    </main>
 
-  <form class="msger-inputarea">
+    <form class="msger-inputarea">
 
-      <input type="text" class="msger-input" placeholder="Enter your message..."/>
+        <input type="text" class="msger-input" placeholder="Enter your message..."/>
 
 
-    <button type="submit" class="msger-send-btn" id="sumbit">Send</button>
-  </form>
-  <script type="text/javascript">
-    const msgerForm = document.getElementsByClassName("msger-inputarea")[0];
-    const msgerInput = document.getElementsByClassName("msger-input")[0];
-    const msgerChat = document.getElementsByClassName("msger-chat")[0];
-    // Icons made by Freepik from www.flaticon.com
-    const BOT_IMG = "https://media.istockphoto.com/id/1010001882/vector/%C3%B0%C3%B0%C2%B5%C3%B1%C3%B0%C3%B1%C3%B1.jpg?s=612x612&w=0&k=20&c=1jeAr9KSx3sG7SKxUPR_j8WPSZq_NIKL0P-MA4F1xRw=";
-    const PERSON_IMG = "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=612x612&w=0&k=20&c=EOYXACjtZmZQ5IsZ0UUp1iNmZ9q2xl1BD1VvN6tZ2UI=";
-    const BOT_NAME = "BOT";
-    const PERSON_NAME = "Me";
-        console.log('1')
+        <button type="submit" class="msger-send-btn" id="sumbit">Send</button>
+    </form>
+    <script type="text/javascript">
+        let sleep = ms => {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        };
+        let chatFrnd=document.getElementById("chat-friend");
+        let chatRand=document.getElementById("chat-random");
+        chatRand.onclick=function (){
+            var your_id=document.getElementById("id1-input");
+            ws.send(JSON.stringify({"type":"RandConn","your_id":your_id.value}))
+            document.getElementById('btn-options').style.display='none';
+            document.getElementById('msg-coninfo').innerHTML='<p>Waiting For Connection...</p>';
+
+        }
+        chatFrnd.onclick=function (){
+            document.getElementById("chatfrnd-input").style.display="flex";
+            document.getElementById("btn-options").style.display="none";
+
+        }
+        const msgerForm = document.getElementsByClassName("msger-inputarea")[0];
+        const msgerInput = document.getElementsByClassName("msger-input")[0];
+        const msgerChat = document.getElementsByClassName("msger-chat")[0];
+        const BOT_IMG = "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=612x612&w=0&k=20&c=EOYXACjtZmZQ5IsZ0UUp1iNmZ9q2xl1BD1VvN6tZ2UI="
+        const PERSON_IMG = "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=612x612&w=0&k=20&c=EOYXACjtZmZQ5IsZ0UUp1iNmZ9q2xl1BD1VvN6tZ2UI=";
         var your_id=Math.floor(Math.random() * 100);
-        document.querySelector("#id1-input").value = your_id;
         const protocol = window.location.protocol.includes('https') ? 'wss': 'ws';
         const ws = new WebSocket(`${protocol}://${location.host}/EstablishConn/${your_id}`);
         function Est() {
-            console.log('start');
+
             //const your_id = document.getElementById('id1-input').value;
             //const friend_id = document.getElementById('id2-input').value;
             //document.querySelector("#ws1-id").textContent = your_id;
-            //document.getElementById('id1-input').style.display = 'none';
-            document.getElementById('id1-input').hidden=true;
-            document.getElementById('id2-input').hidden=true;
-            document.getElementById('conn1').style.display = 'none';
+            //document.getElementById('id1-input').style.display = 'none'
+            //document.getElementById('id1-input').hidden=true;
+            //document.getElementById('id2-input').hidden=true;
+            var frnd_id=document.getElementById("id2-input");
+            var your_id=document.getElementById("id1-input");
+            if(frnd_id.value>0){
+                ws.send(JSON.stringify({"type":"FrndKey","your_id":your_id.value,"frnd_id":frnd_id.value}));
+                //modal.style.display = "none";
+                document.getElementById('chatfrnd-input').style.display='none';
+                document.getElementById('msg-coninfo').innerHTML='<p>Waiting For Connection...</p>';
+            }
+            else{
+                frnd_id.style.borderColor="red";
+            }
+
+
             //const ws = new WebSocket(`ws://192.168.0.105/EstablishConn/${your_id}`);
         }
-            ws.onmessage = function (event) {
-                console.log(event.data);
-                const fri_id = document.getElementById('id2-input');
-                appendMessage(fri_id.value, BOT_IMG, "left", event.data);
-            };
-
-            function sendMessage(event) {
-                const fri_id = document.getElementById('id2-input');
-                console.log(fri_id.value)
-                const msgdata = new Object();
-                msgdata.msg = input.value;
-                msgdata.friend_id = fri_id.value;
-                console.log(msgdata)
-                ws.send(JSON.stringify(msgdata));
-                input.value = ''
-                event.preventDefault()
+        ws.onmessage = function (event) {
+            //var douquot=event.data.replace(/'/g, '"');
+            console.log(event.data)
+            var jsoda = JSON.parse(event.data);
+            const mtype= jsoda.type;
+            console.log(mtype);
+            if (mtype==="uniqId"){
+                document.querySelector("#id1-input").value = jsoda.Id;
             }
-            msgerForm.addEventListener("submit", event => {
-              event.preventDefault();
-              const fri_id = document.getElementById('id2-input');
-              const your_id = document.getElementById('id1-input');
-              const msgText = msgerInput.value;
-              console.log(msgText)
-              if (!msgText) return;
-              const msgdata = new Object();
-                msgdata.msg = msgText;
-                msgdata.friend_id = fri_id.value;
-                console.log(msgdata)
-                ws.send(JSON.stringify(msgdata));
-              appendMessage(your_id.value, PERSON_IMG, "right", msgText);
-              msgerInput.value = "";
+            else if(mtype==='conncount'){
+                updatelivecount(jsoda.status)
+            }
+            else if (mtype==="Connection"){
+                if(jsoda.status===true){
+                    document.getElementById('msg-coninfo').innerHTML='<p>Connection Established</p>';
+                    document.querySelector("#id2-input").value=jsoda.frnd_id;
+                    sleep(1000).then(() => {
+                        modal.style.display = "none";
+                    });
+                }
+                else if(jsoda.status==="Refuse"){
+                    document.getElementById('msg-coninfo').innerHTML='<p>Connection Refused</p>';
+                    sleep(1000).then(() => {
+                        document.getElementById('msg-coninfo').style.display = "none";
+                        document.getElementById('chatfrnd-input').style.display = "flex";
+                    });
+                }
+                else{
+                    document.getElementById('msg-coninfo').innerHTML=`<p>${jsoda.status}</p>`;
+                }
+            }
+            else {
+                const fri_id = document.getElementById('id2-input');
+                appendMessage(fri_id.value, BOT_IMG, "left", jsoda.content);
+                if(mtype==='CloseConn'){
+                    sleep(1000).then(() => {
+                        msgerChat.innerHTML = '';
+                        modal.style.display = "flex";
+                        document.querySelector("#id2-input").value=0;
+                        document.getElementById("btn-options").style.display="flex";
+                        document.getElementById('msg-coninfo').innerHTML='';
 
-            });
-            function appendMessage(name, img, side, text) {
+                    });
+                }
+            }
+        };
+        msgerForm.addEventListener("submit", event => {
+            event.preventDefault();
+            const fri_id = document.getElementById('id2-input');
+            const your_id = document.getElementById('id1-input');
+            const msgText = msgerInput.value;
+            console.log(msgText)
+            if (!msgText) return;
+            const msgdata = {};
+            msgdata.type="msg"
+                msgdata.msg = msgText;
+            msgdata.friend_id = fri_id.value;
+            console.log(msgdata)
+            ws.send(JSON.stringify(msgdata));
+            appendMessage(your_id.value, PERSON_IMG, "right", msgText);
+            msgerInput.value = "";
+            msgerInput.focus();
+        });
+        function updatelivecount(cou){
+            document.getElementById("countnum").textContent=cou;
+        }
+        function appendMessage(name, img, side, text) {
             //   Simple solution for small apps
-              var today  = new Date();
+            var today  = new Date();
             const msgHTML = `
                         <div class="msg ${side}-msg">
                           <div class="msg-img" style="background-image: url(${img})"></div>
@@ -109,7 +191,22 @@
 
             msgerChat.insertAdjacentHTML("beforeend", msgHTML);
             msgerChat.scrollTop += 500;
-          }
+        }
+
+        //Model(popup)
+        var modal = document.getElementById("myModal");
+
+
+        // When the user clicks the button, open the modal
+        window.onload = function() {
+            modal.style.display = "block";
+        }
+        // When the user clicks anywhere outside of the modal, close it
+        //window.onclick = function(event) {
+        //if (event.target == modal) {
+        //modal.style.display = "none";
+        // }
+        // }
     </script>
 </section>
 </body>
