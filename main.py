@@ -25,7 +25,8 @@ async def ConnectionEstablish(data,rand=False):
     data [ 'frnd_id' ] = int(data [ 'frnd_id' ])
     print(connections.keys())
     for i in connections.keys():
-        if not (set(i).issuperset({data['frnd_id']}) and set(i).issuperset({data['your_id']})):
+        print(set(i).issuperset({data['frnd_id']}),set(i).issuperset({data['your_id']}))
+        if (set(i).issuperset({data['frnd_id']}) or set(i).issuperset({data['your_id']})):
             return await manager.send_msg_client({"type": "Connection", "status": "Already Connected With Others"}, data [ 'your_id' ])
     if data["frnd_id"] not in conn_with_ids:
         return await manager.send_msg_client({"type": "Connection", "status": "Refuse"}, data [ 'your_id' ])
@@ -45,7 +46,7 @@ async def CollapseConnection(left_id):
             connections.pop(i)
             break
     if li[0] in conn_with_ids:
-        await manager.send_msg_client({"content":f"ID:{left_id} was left from chat","type":"CloseConn"},li[0])
+        await manager.send_msg_client({"content":"Person Was Left From Chat","type":"CloseConn"},li[0])
 
 
 
@@ -116,13 +117,14 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
                 await ConnectionEstablish(data)
             elif data["type"]=='RandConn':
                 if random_list!=[]:
+                    print(data['your_id'],random_list[0])
                     await ConnectionEstablish({"your_id": data [ 'your_id' ], "frnd_id": random_list [ 0 ]}, True)
                     random_list.pop()
                 else:
                     random_list.append(data["your_id"])
             else:
                 # await manager.send_personal_message(f"You wrote: {data['msg']", websocket)
-                await manager.send_msg_client({"type":"msg","content":data['msg']}, data [ 'friend_id' ])
+                await manager.send_msg_client({"type":"msg","content":data['msg'],"name":data['name'],"img_no":data['img_no']}, data [ 'friend_id' ])
     except WebSocketDisconnect:
         manager.disconnect(websocket, client_id)
         await CollapseConnection(client_id)
