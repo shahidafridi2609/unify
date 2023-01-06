@@ -12,11 +12,8 @@ app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 
-app.mount(
-    "/static",
-    StaticFiles(directory=Path(__file__).parent.parent.absolute() / "/static"),
-    name="static",
-)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 connections={}
 random_list=[]
 conn_with_ids = {}
