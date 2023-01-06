@@ -23,7 +23,7 @@ async def ConnectionEstablish(data,rand=False):
     print(connections.keys())
     for i in connections.keys():
         print(set(i).issuperset({data['frnd_id']}),set(i).issuperset({data['your_id']}))
-        if (set(i).issuperset({data['frnd_id']}) or set(i).issuperset({data['your_id']})):
+        if (set(i).issuperset({data['frnd_id']}) ^ set(i).issuperset({data['your_id']})):
             return await manager.send_msg_client({"type": "Connection", "status": "Already Connected With Others"}, data [ 'your_id' ])
     if data["frnd_id"] not in conn_with_ids:
         return await manager.send_msg_client({"type": "Connection", "status": "Refuse"}, data [ 'your_id' ])
@@ -125,5 +125,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     except WebSocketDisconnect:
         manager.disconnect(websocket, client_id)
         await CollapseConnection(client_id)
+        if client_id in random_list:
+            random_list.remove(client_id)
         await manager.boardcast_to_all({"type": "conncount", "status": len(conn_with_ids)})
         #await manager.send_msg_client(f"Client #{client_id} left the chat", client_id)
+    except:
+        pass
