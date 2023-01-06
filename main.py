@@ -14,7 +14,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.mount(
     "/static",
-    StaticFiles(directory=Path(__file__).parent.parent.absolute() / "code/static"),
+    StaticFiles(directory=Path(__file__).parent.parent.absolute() / "/static"),
     name="static",
 )
 connections={}
